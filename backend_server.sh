@@ -1,0 +1,1 @@
+gunicorn -c gun.py main:app

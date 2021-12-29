@@ -1,0 +1,9 @@
+celery:
+  backend: your_backend
+  broker: your_broker
+lama:
+  device: cuda:0
+gallery:
+  url: upload_url
+  token: url_token
+  externurl: you_externalurl

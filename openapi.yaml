@@ -1,0 +1,132 @@
+openapi: 3.0.3
+info:
+  title: 智能抠图
+  version: 1.0.0
+  description: 智能抠图
+  contact:
+    email: xch@raxch.cn
+    name: EricXia
+    url: ericxia.cn
+servers:
+  - url: http
+  - url: https
+paths:
+  /:
+    get:
+      summary: 测试连接
+      responses:
+        '200':
+          description: 连接成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+              example:
+                status: OK
+  /detectron2_upload:
+    post:
+      summary: 图片全景分割预处理
+      requestBody:
+        description: 请求正文
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                image:
+                  type: string
+                  format: binary
+                  description: 上传的图片
+        required: true
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  res:
+                    type: array
+                    items:
+                      type: array
+                      items:
+                        type: integer
+                  id:
+                    type: string
+                    description: 对应处理任务的ID
+              example:
+                res:
+                  - - 1
+                    - 2
+                  - - 1
+                    - 2
+                id: bb274ac3-dd17-4f2c-98e2-88155ea718fe
+  /detectron2/{taskid}/{maskid}:
+    get:
+      parameters:
+        - name: taskid
+          in: path
+          required: true
+          description: 对应全景分割任务的ID
+          schema:
+            type: string
+            example: bb274ac3-dd17-4f2c-98e2-88155ea718fe
+        - name: maskid
+          in: path
+          required: true
+          description: 对应的MASK的ID
+          schema:
+            type: integer
+            example: 0
+      summary: 获取对应mask的图片
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/png:
+              schema:
+                type: string
+                format: binary
+  /lama:
+    post:
+      summary: 图像修复
+      requestBody:
+        description: 请求正文
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                image:
+                  type: string
+                  format: binary
+                  description: 上传的图片
+                id:
+                  type: array
+                  items:
+                    type: integer
+                  description: MaskId
+                task:
+                  type: string
+                  description: 全景分割任务的TaskId
+        required: true
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  url:
+                    type: string
+                    description: 图片URL地址
+              example:
+                code: 0
+                url: https://img.ericxia.cn/20211229_LiwWSpCa.jpg
